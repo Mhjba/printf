@@ -1,26 +1,22 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <limits.h>
 
-int _putchar(char c);
+int _putchar(char character);
+int printf_char(va_list args, int printed);
+int printf_string(va_list args, int printed);
+int printf_integer(va_list args, int printed);
+int selector(const char *format, va_list args, int printed);
+int printf_binary(unsigned int num, int printed);
 int _printf(const char *format, ...);
-void print_unknown_specifier(char specifier, size_t *count);
-void print_null_or_str(char *s, size_t *count);
-void print_unsigned(unsigned int num, size_t *count);
-void print_octal(unsigned int num, size_t *count);
-void print_hex(unsigned int num, int uppercase, size_t *count);
-void print_binary(unsigned int num, size_t *count);
-void print_integer(int num, size_t *count);
-void handle_format_specifier(char specifier, va_list args, size_t *count);
-void handle_hex(unsigned int num, int is_upper, size_t *count);
-void handle_octal(unsigned int num, size_t *count);
-void handle_unsign(unsigned int num, size_t *count);
-void handle_bin(unsigned int num, size_t *count);
-void handle_str(char *s, size_t *count);
-void handle_char(char c, size_t *count);
-void handle_int(unsigned int num, size_t *count);
+int _x(unsigned int num, int printed, int uppercase);
+int printf_octal(unsigned int num, int printed);
+int printf_unsigned(unsigned int num, int printed);
+int printf_reverse(va_list args, int printed);
+int printf_pointer(va_list args, int printed);
+
 #endif

@@ -1,140 +1,80 @@
 #include "main.h"
+
 /**
- * print_unsigned - entry point
- * @num: variable of type unsigned int
- * @count: number of count
+ * printf_integer - prints intiger number
+ * @args: number arguements
+ * @printed: the printed characters
+ * Return: printed charcaters
  */
 
-void print_unsigned(unsigned int num, size_t *count)
+int printf_integer(va_list args, int printed)
 {
-	char num_str[12];
-	int len = 0;
-	int i;
+	int num = va_arg(args, int);
+	int digits = 0;
+	int temp = num;
+	int digit;
 
-	if (num == 0)
-		num_str[len++] = '0';
-	while (num > 0)
+	if (num < 0)
 	{
-		num_str[len++] = num % 10 + '0';
-		num = num / 10;
+		printed += _putchar('-');
+		num = -num;
+
+		temp = num;
 	}
 
-	for (i = len - 1; i >= 0; i--)
+	do {
+		digits++;
+		temp /= 10;
+	} while (temp != 0);
+
+	while (digits > 0)
 	{
-		write(1, &num_str[i], 1);
-		(*count)++;
+		int pow10 = 1;
+		int i;
+
+		for (i = 1; i < digits; i++)
+		{
+			pow10 *= 10;
+		}
+		digit = num / pow10;
+		printed += _putchar(digit + '0');
+		num -= digit * pow10;
+		digits--;
 	}
+	return (printed);
 }
 /**
- * print_octal - entry point
- * @num: variable of type unsigned int
- * @count: number count
+ * printf_octal - prints a binary number
+ * @num: number of arguements
+ * @printed: the printed characters
+ * Return: printed charcaters
  */
 
-void print_octal(unsigned int num, size_t *count)
+int printf_octal(unsigned int num, int printed)
 {
-	char octal_str[12];
-	int len = 0;
-	int i;
+	int oct[100], i = 0, j;
 
-	while (num > 0)
+	while (num != 0)
 	{
-		octal_str[len++] = num % 8 + '0';
-		num = num / 8;
+		int remainder = num % 8;
+
+		oct[i] = 48 + remainder;
+		i++;
+		num /= 8;
 	}
 
-	if (len == 0)
-		octal_str[len++] = '0';
-
-	for (i = len - 1; i >= 0; i--)
+	if (i == 0)
 	{
-		write(1, &octal_str[i], 1);
-		(*count)++;
+		_putchar('0');
+		printed++;
 	}
-}
-
-/**
- * print_hex - entry point
- * @num: variable of type unsigned int
- * @uppercase: flag to print uppercase hex
- * @count: number count
- */
-void print_hex(unsigned int num, int uppercase, size_t *count)
-{
-	char hex_str[12];
-	int len = 0;
-	int i, remainder;
-
-	while (num > 0)
+	else
 	{
-		remainder = num % 16;
-		if (remainder < 10)
-			hex_str[len++] = remainder + '0';
-		else
-			hex_str[len++] = (uppercase ? 'A' : 'a') + remainder - 10;
-		num = num / 16;
+		for (j = i - 1; j >= 0; j--)
+		{
+			_putchar(oct[j]);
+			printed++;
+		}
 	}
-
-	if (len == 0)
-		hex_str[len++] = '0';
-
-	for (i = len - 1; i >= 0; i--)
-	{
-		write(1, &hex_str[i], 1);
-		(*count)++;
-	}
-}
-/**
- * handle_char - entry point
- * @c: a character
- * @count: character count
- */
-void handle_char(char c, size_t *count)
-{
-	write(1, &c, 1);
-	(*count)++;
-}
-/**
- * handle_format_specifier - handle all format specifier
- * @specifier: character specifier
- * @args: the argument list
- * @count: number count
- */
-void handle_format_specifier(char specifier, va_list args, size_t *count)
-{
-	switch (specifier)
-	{
-	case 'c':
-		handle_char(va_arg(args, int), count);
-		break;
-	case 'd':
-	case 'i':
-		handle_int(va_arg(args, int), count);
-		break;
-	case 's':
-		handle_str(va_arg(args, char *), count);
-		break;
-	case 'b':
-		handle_bin(va_arg(args, unsigned int), count);
-		break;
-	case 'u':
-		handle_unsign(va_arg(args, unsigned int), count);
-		break;
-	case 'o':
-		handle_octal(va_arg(args, unsigned int), count);
-		break;
-	case 'x':
-		handle_hex(va_arg(args, unsigned int), 0, count);
-		break;
-	case 'X':
-		handle_hex(va_arg(args, unsigned int), 1, count);
-		break;
-	case '%':
-		write(1, "%", 1);
-		(*count)++;
-		break;
-	default:
-		print_unknown_specifier(specifier, count);
-		break;
-	}
+	return (printed);
 }
