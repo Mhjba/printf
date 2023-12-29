@@ -6,53 +6,46 @@
  * @...: ...
  * Return: (int)
  */
+
 int _printf(const char *format, ...)
 {
-	int chara_print = 0;
-	va_list list_of_args;
+va_list pa;
+int i = 0, count = 0;
 
-	if (format == NULL)
-		return (-1);
-	va_start(list_of_args, format);
+va_start(pa, format);
 
-	while (*format)
-	{
-		if (*format != '%')
-		{
-			write(1, format, 1);
-			chara_print++;
-		}
-		else
-		{
-			format++;
-			if (*format == '\0')
-				break;
-			if (*format == '%')
-			{
-				write(1, format, 1);
-				chara_print++;
-			}
-			else if (*format == 'c')
-			{
-				char c = va_arg(list_of_args, int);
 
-				write(1, &c, 1);
-				chara_print++;
-			}
-			else if (*format == 's')
-			{
-				char *str = va_arg(list_of_args, char *);
-				int str_len = 0;
+if (format == NULL)
+return (-1);
 
-				while (str[str_len] != '\0')
-					str_len++;
+while (format[i])
+{
+if (format[i] != '%')
+{
+_putchar(format[i]);
+count++;
+}
+else
+{
+switch (format[i + 1])
+{
+case 'c':
+count += print_char(pa);
+break;
+case 's':
+count += print_string(pa);
+break;
+case '%':
+count += print_percentage(pa);
+break;
+default:
+return (-1);
+}
+i++;
+}
+i++;
+}
 
-				write(1, str, str_len);
-				chara_print += str_len;
-			}
-		}
-		format++;
-	}
-	va_end(list_of_args);
-	return (chara_print);
+va_end(pa);
+return (count);
 }

@@ -9,9 +9,10 @@
 
 
 
+int _putchar(char c);
+int print_char(va_list pa);
+int print_string(va_list pa);
+int print_percentage(va_list pa);
 int _printf(const char *format, ...);
-void handle_char(char c, size_t *count);
-void print_null_or_str(char *s, size_t *count);
-void print_integer(int num, size_t *count);
-
+#define BUFF_SIZE 1024
 #endif
