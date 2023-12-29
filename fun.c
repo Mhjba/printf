@@ -1,83 +1,65 @@
-#include"main.h"
-
+#include "main.h"
 /**
- * handle_char - entry point
- * @c: a character
- * @count: character count
+ * _putchar - write the character c to stdout
+ * @c: The character to print
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
  */
-void handle_char(char c, size_t *count)
+int _putchar(char c)
 {
-	write(1, &c, 1);
-	(*count)++;
+	return (write(1, &c, 1));
 }
 /**
- * print_null_or_str - entry point
- * @s: a string of characters
- * @count: characrter count
+ * print_char - ...
+ * @pa: pointer to argument
+ * Return: int
  */
-void print_null_or_str(char *s, size_t *count)
-{
-	size_t len = 0;
 
-	if (s == NULL)
-	{
-		write(1, "(null)", 6);
-		(*count) += 6;
-	}
-	else
-	{
-		while (s[len] != '\0')
-			len++;
-		write(1, s, len);
-		(*count) += len;
-	}
+int print_char(va_list pa)
+{
+char x;
+
+x = va_arg(pa, int);
+_putchar(x);
+return (1);
 }
+
 /**
-* print_integer - entry point
-* @num: variable of type int
-* @count: number count
-*/
-void print_integer(int num, size_t *count)
+ * print_string - ...
+ * @pa: pointer to argument
+ * Return: counter
+ */
+
+int print_string(va_list pa)
 {
-	char *num_str;
-	int len = 0;
-	int i;
-	int max_digits;
+char *str;
+int i = 0;
 
-	if (num == 0)
-	{
-		num_str = malloc(2);
-		if (num_str == NULL)
-		{
-			return;
-		}
-		num_str[len++] = '0';
-	}
-	else if (num < 0)
-	{
-		write(1, "-", 1);
-		(*count)++;
-		num = -num;
-	}
-	max_digits = 12;
+str = va_arg(pa, char *);
 
-	num_str = malloc(max_digits);
-	if (num_str == NULL)
-	{
-		return;
-	}
+if (str == NULL)
+str = "(null)";
 
-	while (num > 0)
-	{
-		num_str[len++] = num % 10 + '0';
-		num = num / 10;
-	}
+while (str[i])
+{
+_putchar(str[i]);
+i++;
+}
 
-	for (i = len - 1; i >= 0; i--)
-	{
-		write(1, &num_str[i], 1);
-		(*count)++;
-	}
-	free(num_str);
+return (i);
+}
+
+/**
+ * print_percentage - ...
+ * @pa: pointer to argument
+ * Return: nothing
+ */
+
+int print_percentage(va_list pa)
+{
+(void) pa;
+_putchar('%');
+return (1);
 }
 
