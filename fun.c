@@ -1,65 +1,57 @@
 #include "main.h"
 /**
- * _putchar - write the character c to stdout
- * @c: The character to print
- *
- * Return: On success 1.
- * On error, -1 is returned, and errno is set appropriately.
+ * handle_int - entry point
+ * @num: the num
+ * @count: number count
  */
-int _putchar(char c)
+void handle_int(unsigned int num, size_t *count)
 {
-	return (write(1, &c, 1));
+	print_integer(num, count);
 }
 /**
- * print_char - ...
- * @pa: pointer to argument
- * Return: int
+ * handle_str - entry point
+ * @s: the string
+ * @count: number count
  */
-
-int print_char(va_list pa)
+void handle_str(char *s, size_t *count)
 {
-char x;
-
-x = va_arg(pa, int);
-_putchar(x);
-return (1);
+	print_null_or_str(s, count);
 }
-
 /**
- * print_string - ...
- * @pa: pointer to argument
- * Return: counter
+ * handle_bin - entry point
+ * @num: the number
+ * @count: the number count
  */
-
-int print_string(va_list pa)
+void handle_bin(unsigned int num, size_t *count)
 {
-char *str;
-int i = 0;
-
-str = va_arg(pa, char *);
-
-if (str == NULL)
-str = "(null)";
-
-while (str[i])
-{
-_putchar(str[i]);
-i++;
+	print_binary(num, count);
 }
-
-return (i);
+/**
+ * handle_unsign - entry point
+ * @num: the number
+ * @count: the number count
+ */
+void handle_unsign(unsigned int num, size_t *count)
+{
+	print_unsigned(num, count);
+}
+/**
+ * handle_octal - entry point
+ * @num: the num
+ * @count: the number count
+ */
+void handle_octal(unsigned int num, size_t *count)
+{
+	print_octal(num, count);
 }
 
 /**
- * print_percentage - ...
- * @pa: pointer to argument
- * Return: nothing
+ * handle_hex - entry point
+ * @num: the number
+ * @is_upper: 0 if false, 1 if true
+ * @count: the number count
  */
-
-int print_percentage(va_list pa)
+void handle_hex(unsigned int num, int is_upper, size_t *count)
 {
-(void) pa;
-_putchar('%');
-return (1);
+	print_hex(num, is_upper, count);
 }
-
