@@ -1,13 +1,18 @@
 #ifndef MAIN_H
 #define MAIN_H
-#include <stdarg.h>
-#include <stdio.h>
-#include <limits.h>
-int _putchar(char c);
-int print_i(int value);
-void print_b(char buffer[], int *buff_ind);
 
+#include <stdio.h>
+#include <stdarg.h>
+#include <unistd.h>
+#include <math.h>
+#include <limits.h>
+
+/* Functions prototypes */
+
+int print_char(char c);
+int print_string(char *s);
 int _printf(const char *format, ...);
-#define BUFF_SIZE 1024
+int getNumberLength(int myNum);
+void check_number(int n);
 
 #endif

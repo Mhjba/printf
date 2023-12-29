@@ -1,104 +1,71 @@
-#include"main.h"
+#include "main.h"
 
 /**
- * print_char - ...
- * @pa: pointer to argument
- * Return: int
- */
-
-int print_char(va_list pa)
-{
-char x;
-
-x = va_arg(pa, int);
-_putchar(x);
-return (1);
-}
-
-/**
- * print_string - ...
- * @pa: pointer to argument
- * Return: counter
- */
-
-int print_string(va_list pa)
-{
-char *str;
-int i = 0;
-
-str = va_arg(pa, char *);
-
-if (str == NULL)
-str = "(null)";
-
-while (str[i])
-{
-_putchar(str[i]);
-i++;
-}
-
-return (i);
-}
-
-/**
- * print_percentage - ...
- * @pa: pointer to argument
- * Return: nothing
- */
-
-int print_percentage(va_list pa)
-{
-(void) pa;
-_putchar('%');
-return (1);
-}
-
-/**
- * _printf - work as printf function
- * @format: pointer to argument
- * @...: ...
- * Return: (int)
+ * _printf - The printf function clone
+ * @format: a constant pointer to a char
+ *
+ * Return: the size of the printed args
  */
 
 int _printf(const char *format, ...)
 {
-va_list pa;
-int i = 0, count = 0;
+	va_list combo;
+	int digi;
+	char chr;
+	char *strarg;
+	int len = 0;
 
-va_start(pa, format);
-
-
-if (format == NULL)
-return (-1);
-
-while (format[i])
-{
-if (format[i] != '%')
-{
-_putchar(format[i]);
-count++;
-}
-else
-{
-switch (format[i + 1])
-{
-case 'c':
-count += print_char(pa);
-break;
-case 's':
-count += print_string(pa);
-break;
-case '%':
-count += print_percentage(pa);
-break;
-default:
-return (-1);
-}
-i++;
-}
-i++;
-}
-
-va_end(pa);
-return (count);
+	va_start(combo, format);
+	if (!format)
+		return (-1);
+	while (*format)
+	{
+		if (*format == '%')
+		{
+			format++;
+			if (*format == '%')
+			{
+				len += print_char('%');
+			}
+			else if (*format == '\0')
+			{
+				break;
+			}
+			else
+			{
+				switch (*format)
+				{
+					case 'c':
+						chr = (va_arg(combo, int));
+						len += print_char(chr);
+						break;
+					case 's':
+						strarg = (va_arg(combo, char *));
+						len += print_string(strarg);
+						break;
+					case 'd':
+					case 'i':
+						digi = va_arg(combo, int);
+						if (digi < 0)
+						{
+							len++;
+						}
+						len += getNumberLength(digi);
+						check_number(digi);
+						break;
+					default:
+						len += print_char('%');
+						len += print_char(*format);
+						break;
+				}
+			}
+		}
+		else
+		{
+			len += print_char(*format);
+		}
+		format++;
+	}
+	va_end(combo);
+	return (len);
 }
