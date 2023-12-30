@@ -10,10 +10,20 @@ int _printf(const char *format, ...)
 {
 	va_list head;
 	int i = 0, counter = 0, ret;
-	fmt spec[] = {{'c', print_char}, {'s', print_str}, {'i', print_int},
-	{'d', print_int}, {'b', print_bin}, {'u', print_unsign}, {'o', print_octal},
-	{'x', print_hexa}, {'X', print_heXa}, {'p', print_p}, {'S', print_S},
-	{'r', print_rev}, {'R', print_rot13}};
+	fmt spec[] = {
+		{'c', print_char},
+		{'s', print_str},
+		{'i', print_int},
+		{'d', print_int},
+		{'b', print_bin},
+		{'u', print_unsign},
+		{'o', print_octal},
+		{'x', print_hexa},
+		{'X', print_heXa},
+		{'p', print_p},
+		{'S', print_S},
+		{'r', print_rev},
+		{'R', print_rot13}};
 
 	va_start(head, format);
 	if (format == NULL)
