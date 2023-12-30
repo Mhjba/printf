@@ -56,20 +56,8 @@ int print_hexa_num(unsigned int n)
 int print_rot13(va_list h)
 {
 	char *ptr = va_arg(h, char *);
-	char alp[52] = {
-	'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E',
-	'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I', 'j', 'J',
-	'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O',
-	'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T',
-	'u', 'U', 'v', 'V', 'w', 'W', 'x', 'X', 'y', 'Y',
-	'z', 'Z',};
-	char rot[52] = {
-	'n', 'N', 'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R',
-	's', 'S', 't', 'T', 'u', 'U', 'v', 'V', 'w', 'W',
-	'x', 'X', 'y', 'Y', 'z', 'Z', 'a', 'A', 'b', 'B',
-	'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G',
-	'h', 'H', 'i', 'I', 'j', 'J', 'k', 'K', 'l', 'L',
-	'm', 'M',};
+	char alp[52] = "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN";
+	char rot[52] = "nmreglhvbcdfqstuwxyzjkpioaNMREGLHVBCDFQSTUWXYZJKPIOA";
 	int i, counter = 0;
 
 	while (*ptr != '\0')
