@@ -1,74 +1,42 @@
 #include "main.h"
 /**
- * print_character - Prints a single character.
- * @args: List of arguments.
- * @b: Buffer array to handle printing.
- * @f:  flags that Calculates active flags.
- * @w: Width specification.
- * @p: Precision specification.
- * @s: Size specifier.
- *
- * Return: Number of characters printed.
+ * printf_37 - prints the char 37.
+ * Return: 1.
  */
-int print_character(va_list args, char b[], int f, int w, int p, int s)
+int printf_37(void)
 {
-    char character = va_arg(args, int);
-
-    return (write_char(character, b, f, w, p, s));
+	_putchar(37);
+	return (1);
 }
-
 /**
- * print_custom_string - Prints a string.
- * @args: List of arguments.
- * @b: Buffer array to handle printing.
- * @f: flags that Calculates active flags.
- * @w: Width specification.
- * @p: Precision specification.
- * @s: Size specifier.
- *
- * Return: Number of characters printed.
+ * printf_bin - prints a binary number.
+ * @val: arguments.
+ * Return: 1.
  */
-int print_custom_string(va_list args, char b[], int f, int w, int p, int s)
+int printf_bin(va_list val)
 {
-    int length = 0; int i;
-    char *str = va_arg(args, char *);
+	int flag = 0;
+	int cont = 0;
+	int i, a = 1, b;
+	unsigned int num = va_arg(val, unsigned int);
+	unsigned int p;
 
-    UNUSED(b);
-    UNUSED(f);
-    UNUSED(w);
-    UNUSED(p);
-    UNUSED(s);
-
-    if (str == NULL)
-    {
-        str = "(null)";
-        if (p >= 6)
-            str = "      ";
-    }
-
-    while (str[length] != '\0')
-        length++;
-
-    if (p >= 0 && p < length)
-        length = p;
-
-    if (w > length)
-    {
-        if (f & FLAG_MINUS)
-        {
-            write(1, &str[0], length);
-            for (i = w - length; i > 0; i--)
-                write(1, " ", 1);
-            return (w);
-        }
-        else
-        {
-            for (i = w - length; i > 0; i--)
-                write(1, " ", 1);
-            write(1, &str[0], length);
-            return (w);
-        }
-    }
-
-    return (write(1, str, length));
+	for (i = 0; i < 32; i++)
+	{
+		p = ((a << (31 - i)) & num);
+		if (p >> (31 - i))
+			flag = 1;
+		if (flag)
+		{
+			b = p >> (31 - i);
+			_putchar(b + 48);
+			cont++;
+		}
+	}
+	if (cont == 0)
+	{
+		cont++;
+		_putchar('0');
+	}
+	return (cont);
 }
