@@ -1,118 +1,137 @@
 #include "main.h"
-
 /**
- * print_bin - Function that converts an integer and prints it to stdout
- * in binary
- * @h: va_list argument with value needed
- *
- * Return: The number of character interger in binary printed to stdout
+ * print_non_printable_characters - Prints the hexadecimal ASCII codes of non-printable characters
+ * @types: all arguments
+ * @b: Buffer
+ * @f: flags
+ * @w: width
+ * @p: Precision
+ * @s: Size
+ * Return: Number of characters that are  printed
  */
-int print_bin(va_list h)
+int print_non_printable_characters(va_list types, char b[],
+	int f, int w, int p, int s)
 {
-	unsigned int num = va_arg(h, unsigned int);
-	int bin[32], total = 0, i = 0;
+	int index = 0, offset = 0;
+	char *str = va_arg(types, char *);
 
-	if (num == 0)
+	UNUSED(f);
+
+    UNUSED(p);
+
+    UNUSED(s);
+    
+	UNUSED(w);
+	
+	
+
+	if (str == NULL)
+		return (write(1, "(null)", 6));
+
+	while (str[index] != '\0')
 	{
-		_putchar('0');
-		return (1);
-	}
-	while (num > 0)
-	{
-		bin[i] = (num % 2);
-		num /= 2;
-		i++;
-	}
-	for (--i; i >= 0; i--)
-		total += _putchar(bin[i] + '0');
-	return (total);
-}
-
-
-/**
- * print_octal - Function that prints unsigned int in octal(base(8)) to stdout
- * @h: va_list argument with value needed
- *
- * Return: Number of octal characters printed to stdout
- */
-int print_octal(va_list h)
-{
-	unsigned int num = va_arg(h, unsigned int);
-	int total;
-
-	total = print_octal_num(num);
-	return (total);
-}
-
-/**
- * print_octal_num - Converts decimal number to octal and prints to stdout
- * @n: Decimal number
- *
- * Return: NUmber of characters printed to stdout
- */
-int print_octal_num(unsigned int n)
-{
-	int total = 0, oct[32], i = 0;
-
-	if (n == 0)
-	{
-		_putchar('0');
-		return (1);
-	}
-	while (n > 0)
-	{
-		oct[i] = n % 8;
-		n /= 8;
-		i++;
-	}
-	for (--i; i >= 0; i--)
-		total += _putchar(oct[i] + '0');
-	return (total);
-}
-
-/**
- * print_heXa - Function that prints unsigned int in hexadecimal(base(16))
- * to stdout
- * @h: va_list argument with value needed
- *
- * Return: Number of hexadecimal characters printed to stdout
- */
-int print_heXa(va_list h)
-{
-	unsigned int num = va_arg(h, unsigned int);
-	int total;
-
-	total = print_heXa_num(num);
-	return (total);
-}
-
-/**
- * print_heXa_num - Converts decimal to heXadecimal and prints to stdout
- * @n: Decimal number
- *
- * Return: Number of chracters printed to stdout
- */
-int print_heXa_num(unsigned int n)
-{
-	int total = 0, heX[12], i = 0;
-
-	if (n == 0)
-	{
-		_putchar('0');
-		return (1);
-	}
-
-	while (n > 0)
-	{
-		heX[i] = n % 16;
-		if (heX[i] < 10)
-			heX[i] += '0';
+		if (is_printable_character(str[index]))
+			b[index + offset] = str[index];
 		else
-			heX[i] += ('A' - 10);
-		n /= 16;
-		i++;
+			offset += append_hexadecimal_code(str[index], b, index + offset);
+            index=index+1;
 	}
-	for (--i; i >= 0; i--)
-		total += _putchar(heX[i]);
-	return (total);
+
+	b[index + offset] = '\0';
+
+	return (write(1, b, index + offset));
+}
+
+/**
+ * print_reversed_string - Prints the reverse of a string.
+ * @types: all the arguments
+ * @b: Buffer
+ * @f: flags
+ * @w: width
+ * @p: Precision
+ * @s: Size
+ * Return: Numbers of characters that are  printed
+ */
+
+int print_reversed_string(va_list types, char b[],
+	int f, int w, int p, int s)
+{
+	char *str;
+	int index, count = 0;
+
+	UNUSED(b);
+	UNUSED(f);
+	UNUSED(w);
+	UNUSED(s);
+
+	str = va_arg(types, char *);
+
+	if (str == NULL)
+	{
+		UNUSED(p);
+
+		str = ")Null(";
+	}
+	for (index = 0; str[index]; index++)
+		;
+
+	for (index = index - 1; index >= 0; index--)
+	{
+		char zIndex = str[index];
+
+		write(1, &zIndex, 1);
+		count=count+1;
+	}
+	return (count);
+}
+
+/**
+ * print_rot13_encoded_string - Encode a string in ROT13 and print it..
+ * @types: all arguments
+ * @b: Buffer 
+ * @f:  flags
+ * @w:  width
+ * @p: Precision
+ * @s: Size 
+ * Return: Numbers of characters that are  printed
+ */
+int print_rot13_encoded_string(va_list types, char b[],
+	int f, int w, int p, int s)
+{
+	char v;
+	char *str;
+	unsigned int index, jIndex;
+	int count = 0;
+	char in[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	char out[] = "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm";
+
+	str = va_arg(types, char *);
+	UNUSED(b);
+	UNUSED(f);
+	UNUSED(w);
+	UNUSED(p);
+	UNUSED(s);
+
+	if (str == NULL)
+		str = "(AHYY)";
+	for (index = 0; str[index]; index++)
+	{
+		for (jIndex = 0; in[jIndex]; jIndex++)
+		{
+			if (in[jIndex] == str[index])
+			{
+				v = out[jIndex];
+				write(1, &v, 1);
+				count++;
+				break;
+			}
+		}
+		if (!in[jIndex])
+		{
+			v = str[index];
+			write(1, &v, 1);
+            count=count+1;
+		}
+	}
+	return (count);
 }

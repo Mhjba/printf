@@ -1,73 +1,74 @@
 #include "main.h"
-
 /**
- * print_char - Function to print a single char to stdout
- * @h: va_list argument with value needed
+ * print_character - Prints a single character.
+ * @args: List of arguments.
+ * @b: Buffer array to handle printing.
+ * @f:  flags that Calculates active flags.
+ * @w: Width specification.
+ * @p: Precision specification.
+ * @s: Size specifier.
  *
- * Return: Always 1 for success, exit -3 if fail
+ * Return: Number of characters printed.
  */
-int print_char(va_list h)
+int print_character(va_list args, char b[], int f, int w, int p, int s)
 {
-	int pci;
+    char character = va_arg(args, int);
 
-	pci = _putchar(va_arg(h, int));
-	if (pci == -1)
-		exit(-3);
-	return (pci);
+    return (write_char(character, b, f, w, p, s));
 }
 
 /**
- * print_str - Function to print a string to stdout
- * @h: va_list argument with value needed
+ * print_custom_string - Prints a string.
+ * @args: List of arguments.
+ * @b: Buffer array to handle printing.
+ * @f: flags that Calculates active flags.
+ * @w: Width specification.
+ * @p: Precision specification.
+ * @s: Size specifier.
  *
- * Return: Number of Characters printed to stdout
+ * Return: Number of characters printed.
  */
-int print_str(va_list h)
+int print_custom_string(va_list args, char b[], int f, int w, int p, int s)
 {
-	int psi = 0;
-	char *s;
+    int length = 0; int i;
+    char *str = va_arg(args, char *);
 
-	s = (va_arg(h, char *));
-	if (s == NULL)
-		s = "(null)";
-	while (s[psi])
-		_putchar(s[psi++]);
-	return (psi);
-}
+    UNUSED(b);
+    UNUSED(f);
+    UNUSED(w);
+    UNUSED(p);
+    UNUSED(s);
 
-/**
- * print_num - Prints an integar number
- * @n: Integar number to be printed
- *
- * Return: Number integer characters printed to stdout
- */
-int print_num(long int n)
-{
-	long int num = n, count = 0;
+    if (str == NULL)
+    {
+        str = "(null)";
+        if (p >= 6)
+            str = "      ";
+    }
 
-	if (num < 0)
-	{
-		count += _putchar('-');
-		num *= -1;
-	}
+    while (str[length] != '\0')
+        length++;
 
-	if (num / 10)
-		count += print_num(num / 10);
-	count += _putchar((num % 10) + '0');
-	return (count);
-}
+    if (p >= 0 && p < length)
+        length = p;
 
-/**
- * print_int - Function that Prints an integer to stdout
- * @h: va_list argument with value needed
- *
- * Return: Number of integer characters printed
- */
-int print_int(va_list h)
-{
-	long int num = (long int)va_arg(h, int);
-	int total;
+    if (w > length)
+    {
+        if (f & FLAG_MINUS)
+        {
+            write(1, &str[0], length);
+            for (i = w - length; i > 0; i--)
+                write(1, " ", 1);
+            return (w);
+        }
+        else
+        {
+            for (i = w - length; i > 0; i--)
+                write(1, " ", 1);
+            write(1, &str[0], length);
+            return (w);
+        }
+    }
 
-	total = print_num(num);
-	return (total);
+    return (write(1, str, length));
 }

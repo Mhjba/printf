@@ -1,147 +1,253 @@
 #include "main.h"
 
 /**
- * print_p - Function that prints value of a (void *) in hexadecimal(base(16))
- * to stdout
- * @h: va_list argument with value needed
+ * write_char - function that Prints a string
+ * @c: characters.
+ * @b: Buffer 
+ * @f:  flags.
+ * @w:  width.
+ * @p: precision 
+ * @s: size 
  *
- * Return: Number of hexadecimal characters printed to stdout
+ * Return: Number of characters that are  printed.
  */
-int print_p(va_list h)
-{
-	unsigned long int num = (unsigned long int)va_arg(h, void *);
-	int total = 0, hex[32], i = 0;
+int write_char(char c, char b[],
+	int f, int w, int p, int s)
+{ /* char is stored at left and paddind at buffer's right */
+	int index = 0;
+	char padd = ' ';
 
-	if (num == 0)
+UNUSED(s);
+	UNUSED(p);
+	
+
+	if (f & FLAG_ZERO)
+		padd = '0';
+
+	b[index++] = c;
+	b[index] = '\0';
+
+	if (w > 1)
 	{
-		total += _putchar('(');
-		total += _putchar('n');
-		total += _putchar('i');
-		total += _putchar('l');
-		total += _putchar(')');
-			return (total);
-	}
-	total += _putchar('0');
-	total += _putchar('x');
-	while (num > 0)
-	{
-		hex[i] = num % 16;
-		if (hex[i] < 10)
-			hex[i] += '0';
+		b[BUFFER_SIZE - 1] = '\0';
+		for (index = 0; index < w - 1; index++)
+			b[BUFFER_SIZE - index - 2] = padd;
+
+		if (f & FLAG_MINUS)
+			return (write(1, &b[0], 1) +
+					write(1, &b[BUFFER_SIZE - index - 1], w - 1));
 		else
-			hex[i] += ('a' - 10);
-		num /= 16;
-		i++;
+			return (write(1, &b[BUFFER_SIZE - index - 1], w - 1) +
+					write(1, &b[0], 1));
 	}
-	for (--i; i >= 0; i--)
-		total += _putchar(hex[i]);
-	return (total);
+
+	return (write(1, &b[0], 1));
+}
+
+
+
+
+
+
+/**
+ * write_number - Prints a string
+ * @is_negative: all arguments
+ * @ind: char types.
+ * @b: Buffer 
+ * @f:  flags
+ * @w:  width.
+ * @p: precision 
+ * @s: Size 
+ *
+ * Return: Number of characters that are printed.
+ */
+int write_number(int is_negative, int ind, char b[],
+	int f, int w, int p, int s)
+{
+	int length = BUFFER_SIZE - ind - 1;
+	char padd = ' ', extra_ch = 0;
+
+	UNUSED(s);
+
+	if ((f & FLAG_ZERO) && !(f & FLAG_MINUS))
+		padd = '0';
+	if (is_negative)
+		extra_ch = '-';
+	else if (f & FLAG_PLUS)
+		extra_ch = '+';
+	else if (f & FLAG_SPACE)
+		extra_ch = ' ';
+
+	return (write_integer(ind, b, f, w, p,
+		length, padd, extra_ch));
 }
 
 /**
- * print_S - Function to print a string to stdout
- * Description: Non printable characters (0 < ASCII value < 32 or >= 127) are
- * printed this way: \x, followed by the ASCII code value in hexadecimal (upper
- * case - always 2 characters)
- * @h: va_list argument with value needed
+ * @ind: Index at which the number starts on the buffer
+ * @b: Buffer
+ * @f: Flags
+ * @w: width
+ * @prec: Precision specifier
+ * @length: Number length
+ * @padd: Pading char
+ * @extra_c: Extra char
  *
- * Return: Number of Characters printed to stdout
+ * Return: Number of printed characters.
  */
-int print_S(va_list h)
+int write_integer(int ind, char b[],
+	int f, int w, int prec,
+	int length, char padd, char extra_c)
 {
-	int pSi = 0, counter = 0;
-	char *S;
+	int i, padd_start = 1;
 
-	S = (va_arg(h, char *));
-	if (S == NULL)
-		S = "(null)";
-	while (S[pSi])
+	if (prec == 0 && ind == BUFFER_SIZE  - 2 && b[ind] == '0' && w == 0)
+		return (0); /* printf(".0d", 0)  no char is printed */
+	if (prec == 0 && ind == BUFFER_SIZE  - 2 && b[ind] == '0')
+		b[ind] = padd = ' '; /* width is displayed with padding ' ' */
+	if (prec > 0 && prec < length)
+		padd = ' ';
+	while (prec > length)
+		b[--ind] = '0', length++;
+	if (extra_c != 0)
+		length++;
+	if (w > length)
 	{
-		if ((S[pSi] > 0 && S[pSi] < 32) || S[pSi] >= 127)
+		for (i = 1; i < w - length + 1; i++)
+			b[i] = padd;
+		b[i] = '\0';
+		if (f & FLAG_MINUS && padd == ' ')
 		{
-			counter += _putchar('\\');
-			counter += _putchar('x');
-			if (S[pSi] < 16)
-			{
-				counter += _putchar('0');
-				if (S[pSi] < 10)
-					counter += _putchar(S[pSi++] + '0');
-				else
-					counter += _putchar(S[pSi++] + 55);
-			}
-			else
-			{
-				if ((S[pSi] / 16) < 10)
-					counter += _putchar((S[pSi] / 16) + '0');
-				else if ((S[pSi] / 16) >= 10)
-					counter += _putchar((S[pSi] / 16) + 55);
-				if ((S[pSi] % 16) < 10)
-					counter += _putchar((S[pSi] % 16) + '0');
-				else if ((S[pSi] % 16) >= 10)
-					counter += _putchar((S[pSi] % 16) + 55);
-				pSi++;
-			}
+			if (extra_c)
+				b[--ind] = extra_c;
+			return (write(1, &b[ind], length) + write(1, &b[1], i - 1));
 		}
-		else
-			counter += _putchar(S[pSi++]);
+		else if (!(f & FLAG_MINUS) && padd == ' ')
+		{
+			if (extra_c)
+				b[--ind] = extra_c;
+			return (write(1, &b[1], i - 1) + write(1, &b[ind], length));
+		}
+		else if (!(f & FLAG_MINUS) && padd == '0')
+		{
+			if (extra_c)
+				b[--padd_start] = extra_c;
+			return (write(1, &b[padd_start], i - padd_start) +
+				write(1, &b[ind], length - (1 - padd_start)));
+		}
 	}
-	return (counter);
+	if (extra_c)
+		b[--ind] = extra_c;
+	return (write(1, &b[ind], length));
 }
 
 /**
- * print_rev - Prints a string in reverse.
- * @h: Va_list argument with value needed.
+ * @is_negative: Number that indicate if the number  is neg or pos
+ * @ind: index of the start of the buff
+ * @b: buffer
+ * @f: Flags 
+ * @w: Width 
+ * @p: Precision 
+ * @s: Size 
  *
- * Return: lenght of string
+ * Return: Number of written chars.
  */
-int print_rev(va_list h)
+int write_unsigned(int is_negative, int ind,
+	char b[],
+	int f, int w, int p, int s)
 {
-	int len = 0, i;
-	char *s = va_arg(h, char *);
+	
+	int length = BUFFER_SIZE  - ind - 1, i = 0;
+	char padd = ' ';
 
-	while (*s != '\0')
+	UNUSED(is_negative);
+	UNUSED(s);
+
+	if (p == 0 && ind == BUFFER_SIZE  - 2 && b[ind] == '0')
+		return (0); 
+
+	if (p > 0 && p < length)
+		padd = ' ';
+
+	while (p > length)
 	{
-		len++;
-		++s;
+		b[--ind] = '0';
+		length++;
 	}
 
-	s--;
+	if ((f & FLAG_ZERO) && !(f & FLAG_MINUS))
+		padd = '0';
 
-	for (i = len; i > 0; i--)
+	if (w > length)
 	{
-		_putchar(*s);
-		s--;
+		for (i = 0; i < w - length; i++)
+			b[i] = padd;
+
+		b[i] = '\0';
+
+		if (f & FLAG_MINUS) 
+		{
+			return (write(1, &b[ind], length) + write(1, &b[0], i));
+		}
+		else 
+		{
+			return (write(1, &b[0], i) + write(1, &b[ind], length));
+		}
 	}
-	return (len);
+
+	return (write(1, &b[ind], length));
 }
 
 /**
- * print_uil_num - Prints an integar number
- * @n: Integar number to be printed
+ * @b: buffer
+ * @ind: Index - the start of buff
+ * @length: Length_of_number
+ * @w: the width 
+ * @f: Flags 
+ * @padd:padding
+ * @extra_c:  extracharacter
+ * @padd_start:  padding should start -index
  *
- * Return: Number integer characters printed to stdout
+ * Return: Number of  characters that are writted.
  */
-int print_uil_num(uil n)
+int write_memory_address(char b[], int ind, int length,
+	int w, int f, char padd, char extra_c, int padd_start)
 {
-	uil num = n, count = 0;
+	int i;
 
-	if (num / 10)
-		count += print_uil_num(num / 10);
-	count += _putchar((num % 10) + '0');
-	return (count);
-}
-
-/**
- * print_unsign - Function that prints an unsigned int to stdout
- * @h: va_list argument with value needed
- *
- * Return: The number of unsinged integers printed to stdout
- */
-int print_unsign(va_list h)
-{
-	unsigned int num = va_arg(h, unsigned int);
-	int total;
-
-	total = print_uil_num((uil) num);
-	return (total);
+	if (w > length)
+	{
+		for (i = 3; i < w - length + 3; i++)
+			b[i] = padd;
+		b[i] = '\0';
+		if (f & FLAG_MINUS && padd == ' ')
+		{
+			b[--ind] = 'x';
+			b[--ind] = '0';
+			if (extra_c)
+				b[--ind] = extra_c;
+			return (write(1, &b[ind], length) + write(1, &b[3], i - 3));
+		}
+		else if (!(f & FLAG_MINUS) && padd == ' ')
+		{
+			b[--ind] = 'x';
+			b[--ind] = '0';
+			if (extra_c)
+				b[--ind] = extra_c;
+			return (write(1, &b[3], i - 3) + write(1, &b[ind], length));
+		}
+		else if (!(f & FLAG_MINUS) && padd == '0')
+		{
+			if (extra_c)
+				b[--padd_start] = extra_c;
+			b[1] = '0';
+			b[2] = 'x';
+			return (write(1, &b[padd_start], i - padd_start) +
+				write(1, &b[ind], length - (1 - padd_start) - 2));
+		}
+	}
+	b[--ind] = 'x';
+	b[--ind] = '0';
+	if (extra_c)
+		b[--ind] = extra_c;
+	return (write(1, &b[ind], BUFFER_SIZE  - ind - 1));
 }
