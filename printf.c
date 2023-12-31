@@ -1,45 +1,50 @@
 #include "main.h"
+
 /**
- * _printf - is a function that selects the correct function to print.
- * @format: identifier to look for.
- * Return: the length of the string.
- */
-int _printf(const char * const format, ...)
+  * _printf - custom printf() function
+  * @str_format: ptr to input stream
+  * Return: len (success) 1 (fail)
+  */
+
+int _printf(const char *str_format, ...)
 {
-	convert_match m[] = {
-		{"%s", printf_string}, {"%c", printf_char},
-		{"%%", printf_37},
-		{"%i", printf_int}, {"%d", printf_dec}, {"%r", printf_srev},
-		{"%R", printf_rot13}, {"%b", printf_bin}, {"%u", printf_unsigned},
-		{"%o", printf_oct}, {"%x", printf_hex}, {"%X", printf_HEX},
-		{"%S", printf_exclusive_string}, {"%p", printf_pointer}
-	};
+	va_list params;
+	unsigned int len = 0; /* calculate the length of the str_format*/
+	unsigned int i; /* to go through each character in the string str_format*/
 
-	va_list args;
-	int i = 0, j, len = 0;
-
-	va_start(args, format);
-	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
-		return (-1);
-
-Here:
-	while (format[i] != '\0')
+	if (str_format == NULL)
 	{
-		j = 13;
-		while (j >= 0)
-		{
-			if (m[j].id[0] == format[i] && m[j].id[1] == format[i + 1])
-			{
-				len += m[j].f(args);
-				i = i + 2;
-				goto Here;
-			}
-			j--;
-		}
-		_putchar(format[i]);
-		len++;
-		i++;
+		return (-1);
 	}
-	va_end(args);
+
+	va_start(params, str_format);
+
+	for (i = 0; str_format[i] != '\0'; i++)
+	{
+		/* checking for double percentage str_format*/
+		if (str_format[i] == '%' && str_format[i + 1] == '%')
+		{
+			_putchar('%');
+			len++;
+			i++;
+		}
+		else if (str_format[i] == '%' &&
+				(str_format[i + 1] != '%' && str_format[i + 1] != '\0'))
+		{
+			/* i : position or the index of format*/
+			len += format_ctl(str_format, params, ++i);
+		}
+		else if (str_format[i] == '%' &&
+				(str_format[i + 1] == '\0' || str_format[i + 1] == ' '))
+		{
+			return (-1);
+		}
+		else
+		{
+			_putchar(str_format[i]);
+			len += 1;
+		}
+	}
+	va_end(params);
 	return (len);
 }
