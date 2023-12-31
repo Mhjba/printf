@@ -1,141 +1,48 @@
-#include <stdlib.h>
 #include "main.h"
 /**
-* print_binary - entry point
-* @num: variable of type unsigned int
-* @count: number count
-*/
-void print_binary(unsigned int num, size_t *count)
-{
-	char bin_str[32];
-	int len = 0;
-	int i;
-
-	while (num > 0)
-	{
-		bin_str[len++] = (num % 2) + '0';
-		num = num / 2;
-	}
-
-	if (len == 0)
-		bin_str[len++] = '0';
-
-	for (i = len - 1; i >= 0; i--)
-	{
-		write(1, &bin_str[i], 1);
-		(*count)++;
-	}
-}
-/**
-* print_integer - entry point
-* @num: variable of type int
-* @count: number count
-*/
-void print_integer(int num, size_t *count)
-{
-	char *num_str;
-	int len = 0;
-	int i;
-	int max_digits;
-
-	if (num == 0)
-	{
-		num_str = malloc(2);
-		if (num_str == NULL)
-		{
-			return;
-		}
-		num_str[len++] = '0';
-	}
-	else if (num < 0)
-	{
-		write(1, "-", 1);
-		(*count)++;
-		num = -num;
-	}
-	max_digits = 12;
-
-	num_str = malloc(max_digits);
-	if (num_str == NULL)
-	{
-		return;
-	}
-
-	while (num > 0)
-	{
-		num_str[len++] = num % 10 + '0';
-		num = num / 10;
-	}
-
-	for (i = len - 1; i >= 0; i--)
-	{
-		write(1, &num_str[i], 1);
-		(*count)++;
-	}
-	free(num_str);
-}
-/**
- * print_null_or_str - entry point
- * @s: a string of characters
- * @count: characrter count
- */
-void print_null_or_str(char *s, size_t *count)
-{
-	size_t len = 0;
-
-	if (s == NULL)
-	{
-		write(1, "(null)", 6);
-		(*count) += 6;
-	}
-	else
-	{
-		while (s[len] != '\0')
-			len++;
-		write(1, s, len);
-		(*count) += len;
-	}
-}
-/**
- * print_unknown_specifier - entry point
- * @specifier: the unknown specifier
- * @count: character count
- */
-void print_unknown_specifier(char specifier, size_t *count)
-{
-	write(1, "%", 1);
-	write(1, &specifier, 1);
-	(*count) += 2;
-}
-/**
- * _printf - entry point. custom printf
- * @format: a charcter string
- * Return: return type is a string
+ * _printf -  entry point. custom printf
+ * @format:  a charcter string
+ * Return: Number of characters printed to  stdout
  */
 int _printf(const char *format, ...)
 {
-	size_t count = 0;
-	va_list args;
+	va_list head;
+	int i = 0, counter = 0, ret;
+	fmt spec[] = {
+		{'c', print_char},
+		{'s', print_str},
+		{'i', print_int},
+		{'d', print_int},
+		{'b', print_bin},
+		{'u', print_unsign},
+		{'o', print_octal},
+		{'x', print_hexa},
+		{'X', print_heXa},
+		{'p', print_p},
+		{'S', print_S},
+		{'r', print_rev},
+		{'R', print_rot13}};
 
+	va_start(head, format);
 	if (format == NULL)
 		return (-1);
-	va_start(args, format);
-	while (*format)
+	while (format[i])
 	{
-		if (*format != '%')
-			write(1, format, 1), count++;
-		else
+		if (format[i] == '%')
 		{
-			format++;
-			if (*format == '\0')
-				break;
-			if (*format == '%')
-				write(1, format, 1), count++;
-			else
-				handle_format_specifier(*format, args, &count);
+			ret = flag_char(format, head, &i);
+			if (ret > 0)
+			{
+				counter += ret;
+				continue;
+			}
+			ret = con_spec(format, &i, spec, head);
+			if (ret == -1)
+				return (-1);
+			counter += ret;
+			continue;
 		}
-		format++;
+		counter += _putchar(format[i++]);
 	}
-	va_end(args);
-	return (count);
+	return (counter);
 }

@@ -1,140 +1,192 @@
 #include "main.h"
-/**
- * print_unsigned - entry point
- * @num: variable of type unsigned int
- * @count: number of count
- */
 
-void print_unsigned(unsigned int num, size_t *count)
+/**
+ * print_char - Function to print a single char to stdout
+ * @h: va_list argument with value needed
+ *
+ * Return: Always 1 for success, exit -3 if fail
+ */
+int print_char(va_list h)
 {
-	char num_str[12];
-	int len = 0;
-	int i;
+	int pci;
+
+	pci = _putchar(va_arg(h, int));
+	if (pci == -1)
+		exit(-3);
+	return (pci);
+}
+
+/**
+ * print_str - Function to print a string to stdout
+ * @h: va_list argument with value needed
+ *
+ * Return: Number of Characters printed to stdout
+ */
+int print_str(va_list h)
+{
+	int psi = 0;
+	char *s;
+
+	s = (va_arg(h, char *));
+	if (s == NULL)
+		s = "(null)";
+	while (s[psi])
+		_putchar(s[psi++]);
+	return (psi);
+}
+
+/**
+ * print_num - Prints an integar number
+ * @n: Integar number to be printed
+ *
+ * Return: Number integer characters printed to stdout
+ */
+int print_num(long int n)
+{
+	long int num = n, count = 0;
+
+	if (num < 0)
+	{
+		count += _putchar('-');
+		num *= -1;
+	}
+
+	if (num / 10)
+		count += print_num(num / 10);
+	count += _putchar((num % 10) + '0');
+	return (count);
+}
+
+/**
+ * print_int - Function that Prints an integer to stdout
+ * @h: va_list argument with value needed
+ *
+ * Return: Number of integer characters printed
+ */
+int print_int(va_list h)
+{
+	long int num = (long int)va_arg(h, int);
+	int total;
+
+	total = print_num(num);
+	return (total);
+}
+#include "main.h"
+
+/**
+ * print_bin - Function that converts an integer and prints it to stdout
+ * in binary
+ * @h: va_list argument with value needed
+ *
+ * Return: The number of character interger in binary printed to stdout
+ */
+int print_bin(va_list h)
+{
+	unsigned int num = va_arg(h, unsigned int);
+	int bin[32], total = 0, i = 0;
 
 	if (num == 0)
-		num_str[len++] = '0';
+	{
+		_putchar('0');
+		return (1);
+	}
 	while (num > 0)
 	{
-		num_str[len++] = num % 10 + '0';
-		num = num / 10;
+		bin[i] = (num % 2);
+		num /= 2;
+		i++;
 	}
-
-	for (i = len - 1; i >= 0; i--)
-	{
-		write(1, &num_str[i], 1);
-		(*count)++;
-	}
+	for (--i; i >= 0; i--)
+		total += _putchar(bin[i] + '0');
+	return (total);
 }
+
+
 /**
- * print_octal - entry point
- * @num: variable of type unsigned int
- * @count: number count
+ * print_octal - Function that prints unsigned int in octal(base(8)) to stdout
+ * @h: va_list argument with value needed
+ *
+ * Return: Number of octal characters printed to stdout
  */
-
-void print_octal(unsigned int num, size_t *count)
+int print_octal(va_list h)
 {
-	char octal_str[12];
-	int len = 0;
-	int i;
+	unsigned int num = va_arg(h, unsigned int);
+	int total;
 
-	while (num > 0)
-	{
-		octal_str[len++] = num % 8 + '0';
-		num = num / 8;
-	}
-
-	if (len == 0)
-		octal_str[len++] = '0';
-
-	for (i = len - 1; i >= 0; i--)
-	{
-		write(1, &octal_str[i], 1);
-		(*count)++;
-	}
+	total = print_octal_num(num);
+	return (total);
 }
 
 /**
- * print_hex - entry point
- * @num: variable of type unsigned int
- * @uppercase: flag to print uppercase hex
- * @count: number count
+ * print_octal_num - Converts decimal number to octal and prints to stdout
+ * @n: Decimal number
+ *
+ * Return: NUmber of characters printed to stdout
  */
-void print_hex(unsigned int num, int uppercase, size_t *count)
+int print_octal_num(unsigned int n)
 {
-	char hex_str[12];
-	int len = 0;
-	int i, remainder;
+	int total = 0, oct[32], i = 0;
 
-	while (num > 0)
+	if (n == 0)
 	{
-		remainder = num % 16;
-		if (remainder < 10)
-			hex_str[len++] = remainder + '0';
+		_putchar('0');
+		return (1);
+	}
+	while (n > 0)
+	{
+		oct[i] = n % 8;
+		n /= 8;
+		i++;
+	}
+	for (--i; i >= 0; i--)
+		total += _putchar(oct[i] + '0');
+	return (total);
+}
+
+/**
+ * print_heXa - Function that prints unsigned int in hexadecimal(base(16))
+ * to stdout
+ * @h: va_list argument with value needed
+ *
+ * Return: Number of hexadecimal characters printed to stdout
+ */
+int print_heXa(va_list h)
+{
+	unsigned int num = va_arg(h, unsigned int);
+	int total;
+
+	total = print_heXa_num(num);
+	return (total);
+}
+
+/**
+ * print_heXa_num - Converts decimal to heXadecimal and prints to stdout
+ * @n: Decimal number
+ *
+ * Return: Number of chracters printed to stdout
+ */
+int print_heXa_num(unsigned int n)
+{
+	int total = 0, heX[12], i = 0;
+
+	if (n == 0)
+	{
+		_putchar('0');
+		return (1);
+	}
+
+	while (n > 0)
+	{
+		heX[i] = n % 16;
+		if (heX[i] < 10)
+			heX[i] += '0';
 		else
-			hex_str[len++] = (uppercase ? 'A' : 'a') + remainder - 10;
-		num = num / 16;
+			heX[i] += ('A' - 10);
+		n /= 16;
+		i++;
 	}
+	for (--i; i >= 0; i--)
+		total += _putchar(heX[i]);
+	return (total);
+}
 
-	if (len == 0)
-		hex_str[len++] = '0';
-
-	for (i = len - 1; i >= 0; i--)
-	{
-		write(1, &hex_str[i], 1);
-		(*count)++;
-	}
-}
-/**
- * handle_char - entry point
- * @c: a character
- * @count: character count
- */
-void handle_char(char c, size_t *count)
-{
-	write(1, &c, 1);
-	(*count)++;
-}
-/**
- * handle_format_specifier - handle all format specifier
- * @specifier: character specifier
- * @args: the argument list
- * @count: number count
- */
-void handle_format_specifier(char specifier, va_list args, size_t *count)
-{
-	switch (specifier)
-	{
-	case 'c':
-		handle_char(va_arg(args, int), count);
-		break;
-	case 'd':
-	case 'i':
-		handle_int(va_arg(args, int), count);
-		break;
-	case 's':
-		handle_str(va_arg(args, char *), count);
-		break;
-	case 'b':
-		handle_bin(va_arg(args, unsigned int), count);
-		break;
-	case 'u':
-		handle_unsign(va_arg(args, unsigned int), count);
-		break;
-	case 'o':
-		handle_octal(va_arg(args, unsigned int), count);
-		break;
-	case 'x':
-		handle_hex(va_arg(args, unsigned int), 0, count);
-		break;
-	case 'X':
-		handle_hex(va_arg(args, unsigned int), 1, count);
-		break;
-	case '%':
-		write(1, "%", 1);
-		(*count)++;
-		break;
-	default:
-		print_unknown_specifier(specifier, count);
-		break;
-	}
-}
